@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planejamento de Curso</title>
+  <style>
+    :root {
+      --bg: #121212;
+      --card: #1e1e1e;
+      --card-2: #262626;
+      --border: #343434;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --primary: #1f6feb;
+      --primary-hover: #2f81f7;
+      --danger: #991b1b;
+      --danger-hover: #b91c1c;
+      --success: #2ecc71;
+      --error: #e74c3c;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Roboto", system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+      align-self: flex-start;
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      text-align: center;
+      font-size: 1.45rem;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: #e5e7eb;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #141414;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #141414;
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      gap: 4px;
+    }
+
+    .segmented button {
+      padding: 8px 10px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .segmented button.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .extras-box {
+      display: none;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+
+    .extras-box.visible {
+      display: block;
+    }
+
+    .extras-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .btn-small {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-small:hover {
+      background: var(--primary-hover);
+    }
+
+    .extra-row {
+      display: grid;
+      grid-template-columns: 36px 1fr 90px 32px;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .extra-row span {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .extra-row input {
+      padding: 7px 9px;
+      font-size: 0.88rem;
+    }
+
+    .btn-remove {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      height: 32px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-remove:hover {
+      background: var(--danger-hover);
+    }
+
+    .days-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: #141414;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .check-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .status-box {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #161616;
+      border: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-box.error {
+      color: var(--error);
+      font-weight: 700;
+    }
+
+    .status-box.success {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    /* Popup / Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-window {
+      width: 100%;
+      max-width: 680px;
+      max-height: 88vh;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-window:fullscreen {
+      max-width: 100%;
+      max-height: 100%;
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-secondary {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: #444;
+    }
+
+    .modal-body {
+      padding: 18px;
+      overflow-y: auto;
+      background: #151515;
+      flex: 1;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      color: var(--success);
+      font-size: 0.95rem;
+    }
+
+    .modal-footer {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Planejamento de Curso</h1>
+
+    <div class="field">
+      <label>Modo de programação:</label>
+      <div class="segmented">
+        <button type="button" id="btnModoUnico" class="active" onclick="setModo('unico')">
+          Um curso
+        </button>
+        <button type="button" id="btnModoVarios" onclick="setModo('varios')">
+          Vários cursos
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label id="labelNomeCurso" for="nomeCurso">Nome do Curso:</label>
+      <input type="text" id="nomeCurso" placeholder="Ex: Python Aplicado" />
+    </div>
+
+    <div class="field">
+      <label for="nomeInstrutor">Nome do Instrutor(a):</label>
+      <input type="text" id="nomeInstrutor" placeholder="Ex: Prof.ª Maria Silva" />
+    </div>
+
+    <div class="field">
+      <label for="dataInicial">Data Inicial (DD/MM/AAAA):</label>
+      <input type="text" id="dataInicial" placeholder="Ex: 01/02/2027" />
+    </div>
+
+    <div class="row-2 field">
+      <div>
+        <label id="labelCarga" for="cargaHoraria">Carga Horária (h):</label>
+        <input type="text" id="cargaHoraria" placeholder="Ex: 40" />
+      </div>
+      <div>
+        <label for="horasDia">Horas por dia:</label>
+        <input type="text" id="horasDia" value="8" />
+      </div>
+    </div>
+
+    <div id="extrasBox" class="extras-box">
+      <div class="extras-header">
+        <span>Demais cursos (Curso 2, 3...):</span>
+        <button type="button" class="btn-small" onclick="adicionarCursoExtra()">
+          + Adicionar curso
+        </button>
+      </div>
+      <div id="listaExtras"></div>
+    </div>
+
+    <div class="field">
+      <label>Dias da semana em que haverá aula:</label>
+      <div class="days-group">
+        <label class="check-label"><input type="checkbox" class="dia-check" value="1" checked /> Seg</label>
+        <label class="check-label"><input type="checkbox" class="dia-check" value="2" checked /> Ter</label>
+        <label class="check-label"><input type="checkbox" class="dia-check" value="3" checked /> Qua</label>
+        <label class="check-label"><input type="checkbox" class="dia-check" value="4" checked /> Qui</label>
+        <label class="check-label"><input type="checkbox" class="dia-check" value="5" checked /> Sex</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="check-label">
+        <input type="checkbox" id="bloquearSexta" />
+        Bloquear início de cursos às sextas-feiras
+      </label>
+    </div>
+
+    <button type="button" class="btn-primary" onclick="calcular()">
+      Calcular e Exibir Cronograma
+    </button>
+
+    <div id="statusBox" class="status-box">
+      Preencha os dados e clique em Calcular para abrir a relação em popup.
+    </div>
+  </div>
+
+  <!-- Popup -->
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div id="modalWindow" class="modal-window">
+      <div class="modal-header">
+        <h2>Relação dos Cursos Programados</h2>
+        <div class="modal-actions">
+          <button type="button" id="btnFullscreen" class="btn-small" onclick="alternarTelaCheia()">
+            Tela cheia
+          </button>
+          <button type="button" class="btn-secondary" onclick="fecharPopup()">
+            Fechar
+          </button>
+        </div>
+      </div>
+      <div id="modalBody" class="modal-body"></div>
+      <div class="modal-footer">
+        <span>Use o botão "Tela cheia" ou ESC para sair da tela cheia</span>
+        <button type="button" class="btn-secondary" onclick="fecharPopup()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FERIADOS = new Set([
+      "01/01/2027", "04/01/2027", "05/01/2027", "08/02/2027", "09/02/2027",
+      "10/02/2027", "26/03/2027", "21/04/2027", "01/05/2027", "27/05/2027",
+      "28/05/2027", "08/07/2027", "15/08/2027", "06/09/2027", "07/09/2027",
+      "10/09/2027", "01/10/2027", "07/10/2027", "08/10/2027", "11/10/2027",
+      "12/10/2027", "01/11/2027", "02/11/2027", "14/11/2027", "15/11/2027",
+      "20/11/2027", "20/12/2027", "21/12/2027", "22/12/2027", "23/12/2027",
+      "24/12/2027", "25/12/2027", "26/12/2027", "27/12/2027", "28/12/2027",
+      "29/12/2027", "30/12/2027", "31/12/2027"
+    ]);
+
+    // Em JS: 0 = Domingo, 1 = Segunda, ..., 5 = Sexta, 6 = Sábado
+    const DIAS_SEMANA_NOMES = {
+      0: "Domingo",
+      1: "Segunda-feira",
+      2: "Terça-feira",
+      3: "Quarta-feira",
+      4: "Quinta-feira",
+      5: "Sexta-feira",
+      6: "Sábado"
+    };
+
+    let modoAtual = "unico";
+
+    function setModo(novoModo) {
+      modoAtual = novoModo;
+      const btnUnico = document.getElementById("btnModoUnico");
+      const btnVarios = document.getElementById("btnModoVarios");
+      const extrasBox = document.getElementById("extrasBox");
+      const labelNome = document.getElementById("labelNomeCurso");
+      const labelCarga = document.getElementById("labelCarga");
+      const listaExtras = document.getElementById("listaExtras");
+
+      if (novoModo === "varios") {
+        btnVarios.classList.add("active");
+        btnUnico.classList.remove("active");
+        labelNome.textContent = "Nome do Curso 1:";
+        labelCarga.textContent = "Carga Horária 1º curso (h):";
+        extrasBox.classList.add("visible");
+        if (listaExtras.children.length === 0) {
+          adicionarCursoExtra();
+        }
+      } else {
+        btnUnico.classList.add("active");
+        btnVarios.classList.remove("active");
+        labelNome.textContent = "Nome do Curso:";
+        labelCarga.textContent = "Carga Horária (h):";
+        extrasBox.classList.remove("visible");
+      }
+    }
+
+    function adicionarCursoExtra() {
+      const lista = document.getElementById("listaExtras");
+      const row = document.createElement("div");
+      row.className = "extra-row";
+
+      const span = document.createElement("span");
+      const inputNome = document.createElement("input");
+      inputNome.type = "text";
+      inputNome.className = "extra-nome";
+
+      const inputHoras = document.createElement("input");
+      inputHoras.type = "text";
+      inputHoras.className = "extra-horas";
+      inputHoras.placeholder = "Carga (h)";
+
+      const btnRem = document.createElement("button");
+      btnRem.type = "button";
+      btnRem.className = "btn-remove";
+      btnRem.textContent = "X";
+      btnRem.onclick = () => {
+        row.remove();
+        reindexarExtras();
+      };
+
+      row.append(span, inputNome, inputHoras, btnRem);
+      lista.appendChild(row);
+      reindexarExtras();
+    }
+
+    function reindexarExtras() {
+      const rows = document.querySelectorAll("#listaExtras .extra-row");
+      rows.forEach((row, idx) => {
+        const num = idx + 2;
+        row.querySelector("span").textContent = `C${num}:`;
+        row.querySelector(".extra-nome").placeholder = `Nome Curso ${num}`;
+      });
+    }
+
+    function mostrarErro(msg) {
+      const box = document.getElementById("statusBox");
+      box.className = "status-box error";
+      box.textContent = msg;
+    }
+
+    function mostrarSucesso(msg) {
+      const box = document.getElementById("statusBox");
+      box.className = "status-box success";
+      box.textContent = msg;
+    }
+
+    function parseDataBR(dataStr) {
+      const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dataStr);
+      if (!match) return null;
+      const dia = Number(match[1]);
+      const mes = Number(match[2]);
+      const ano = Number(match[3]);
+      const dt = new Date(ano, mes - 1, dia);
+      if (
+        dt.getFullYear() !== ano ||
+        dt.getMonth() !== mes - 1 ||
+        dt.getDate() !== dia
+      ) {
+        return null;
+      }
+      return dt;
+    }
+
+    function formatDataBR(dt) {
+      const dd = String(dt.getDate()).padStart(2, "0");
+      const mm = String(dt.getMonth() + 1).padStart(2, "0");
+      const yyyy = dt.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function addDias(dt, dias) {
+      const copia = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+      copia.setDate(copia.getDate() + dias);
+      return copia;
+    }
+
+    function proximoDiaAula(dataRef, diasSelecionados) {
+      let candidata = new Date(dataRef.getFullYear(), dataRef.getMonth(), dataRef.getDate());
+      while (true) {
+        const diaIdx = candidata.getDay();
+        const fmt = formatDataBR(candidata);
+        if (diasSelecionados.has(diaIdx) && !FERIADOS.has(fmt)) {
+          return candidata;
+        }
+        candidata = addDias(candidata, 1);
+      }
+    }
+
+    function calcularTerminoCurso(dataInicio, cargaHoraria, horasDia, diasSelecionados) {
+      const encontrosNecessarios = Math.ceil(cargaHoraria / horasDia);
+      let dataAtual = new Date(dataInicio.getFullYear(), dataInicio.getMonth(), dataInicio.getDate());
+      let encontrosContados = 1;
+      let feriadosPulados = 0;
+
+      while (encontrosContados < encontrosNecessarios) {
+        dataAtual = addDias(dataAtual, 1);
+        const diaIdx = dataAtual.getDay();
+        const fmt = formatDataBR(dataAtual);
+
+        if (diasSelecionados.has(diaIdx)) {
+          if (FERIADOS.has(fmt)) {
+            feriadosPulados += 1;
+          } else {
+            encontrosContados += 1;
+          }
+        }
+      }
+
+      return { dataFim: dataAtual, encontros: encontrosNecessarios, feriados: feriadosPulados };
+    }
+
+    function calcular() {
+      const nomeCurso1 = document.getElementById("nomeCurso").value.trim();
+      const nomeInstrutor = document.getElementById("nomeInstrutor").value.trim();
+      const dataStr = document.getElementById("dataInicial").value.trim();
+      const bloquearSexta = document.getElementById("bloquearSexta").checked;
+      const variosCursos = modoAtual === "varios";
+
+      if (!nomeCurso1) {
+        mostrarErro("Por favor, informe o nome do curso.");
+        return;
+      }
+      if (!nomeInstrutor) {
+        mostrarErro("Por favor, informe o nome do instrutor(a).");
+        return;
+      }
+
+      const dataInicial = parseDataBR(dataStr);
+      if (!dataInicial) {
+        mostrarErro("Data inválida! Digite uma data real no formato DD/MM/AAAA (ex: 15/03/2027).");
+        return;
+      }
+
+      const diaSemanaIdx = dataInicial.getDay();
+      if (diaSemanaIdx === 6) {
+        mostrarErro(`A data inicial (${dataStr}) cai em um Sábado. Escolha um dia útil.`);
+        return;
+      }
+      if (diaSemanaIdx === 0) {
+        mostrarErro(`A data inicial (${dataStr}) cai em um Domingo. Escolha um dia útil.`);
+        return;
+      }
+      if (bloquearSexta && diaSemanaIdx === 5) {
+        mostrarErro(`Início às sextas-feiras está bloqueado (${dataStr} é Sexta-feira).`);
+        return;
+      }
+      if (FERIADOS.has(dataStr)) {
+        mostrarErro(`A data inicial (${dataStr}) coincide com um feriado/recesso cadastrado!`);
+        return;
+      }
+
+      const diasSelecionados = new Set(
+        Array.from(document.querySelectorAll(".dia-check:checked")).map((cb) => Number(cb.value))
+      );
+      if (diasSelecionados.size === 0) {
+        mostrarErro("Selecione pelo menos um dia da semana (Seg a Sex) para o curso.");
+        return;
+      }
+      if (!diasSelecionados.has(diaSemanaIdx)) {
+        mostrarErro(`A data ${dataStr} é uma ${DIAS_SEMANA_NOMES[diaSemanaIdx]}, mas esse dia não está marcado na grade do curso.`);
+        return;
+      }
+
+      const carga1 = Number(document.getElementById("cargaHoraria").value.replace(",", ".").trim());
+      const horasDia = Number(document.getElementById("horasDia").value.replace(",", ".").trim());
+      if (!Number.isFinite(carga1) || carga1 <= 0 || !Number.isFinite(horasDia) || horasDia <= 0) {
+        mostrarErro("Informe valores numéricos maiores que zero para carga horária e horas por dia.");
+        return;
+      }
+
+      const listaCursos = [{ nome: nomeCurso1, carga: carga1 }];
+
+      if (variosCursos) {
+        const rows = document.querySelectorAll("#listaExtras .extra-row");
+        for (let i = 0; i < rows.length; i++) {
+          const num = i + 2;
+          const nomeC = rows[i].querySelector(".extra-nome").value.trim();
+          const horasRaw = rows[i].querySelector(".extra-horas").value.replace(",", ".").trim();
+          const cargaC = Number(horasRaw);
+
+          if (!nomeC) {
+            mostrarErro(`Informe o nome do Curso ${num}.`);
+            return;
+          }
+          if (!Number.isFinite(cargaC) || cargaC <= 0) {
+            mostrarErro(`Carga horária inválida no Curso ${num}. Use um número maior que zero.`);
+            return;
+          }
+          listaCursos.push({ nome: nomeC, carga: cargaC });
+        }
+      }
+
+      const linhas = [
+        `Instrutor(a): ${nomeInstrutor}`,
+        `Horas/dia: ${horasDia}h  |  Bloqueio de início na sexta: ${bloquearSexta ? "Sim" : "Não"}`,
+        "---------------------------------------------"
+      ];
+
+      let dataInicioAtual = dataInicial;
+
+      listaCursos.forEach((curso, idx) => {
+        const numCurso = idx + 1;
+        if (numCurso > 1) {
+          dataInicioAtual = proximoDiaAula(addDias(dataInicioAtual, 1), diasSelecionados);
+          if (bloquearSexta && dataInicioAtual.getDay() === 5) {
+            dataInicioAtual = proximoDiaAula(addDias(dataInicioAtual, 1), diasSelecionados);
+          }
+        }
+
+        const { dataFim, encontros, feriados } = calcularTerminoCurso(
+          dataInicioAtual,
+          curso.carga,
+          horasDia,
+          diasSelecionados
+        );
+
+        const diaInicioNome = DIAS_SEMANA_NOMES[dataInicioAtual.getDay()];
+        const diaFimNome = DIAS_SEMANA_NOMES[dataFim.getDay()];
+        let detalhes = `${encontros} encontro(s)`;
+        if (feriados > 0) detalhes += ` • ${feriados} feriado(s) pulado(s)`;
+
+        const prefixo = variosCursos ? `Curso ${numCurso}: ` : "Curso: ";
+        linhas.push(
+          `${prefixo}${curso.nome} (${curso.carga}h)\n` +
+          `  Início:  ${formatDataBR(dataInicioAtual)} (${diaInicioNome})\n` +
+          `  Término: ${formatDataBR(dataFim)} (${diaFimNome})\n` +
+          `  ${detalhes}\n`
+        );
+
+        dataInicioAtual = dataFim;
+      });
+
+      const textoFinal = linhas.join("\n").trim();
+      mostrarSucesso(`Cronograma calculado (${listaCursos.length} curso(s)). Relação exibida no popup.`);
+      abrirPopup(textoFinal);
+    }
+
+    function abrirPopup(texto) {
+      document.getElementById("modalBody").textContent = texto;
+      document.getElementById("modalBackdrop").classList.add("open");
+    }
+
+    function fecharPopup() {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+      document.getElementById("modalBackdrop").classList.remove("open");
+    }
+
+    async function alternarTelaCheia() {
+      const win = document.getElementById("modalWindow");
+      const btn = document.getElementById("btnFullscreen");
+      try {
+        if (!document.fullscreenElement) {
+          await win.requestFullscreen();
+          btn.textContent = "Sair da tela cheia";
+        } else {
+          await document.exitFullscreen();
+          btn.textContent = "Tela cheia";
+        }
+      } catch (e) {
+        // Fallback visual caso o navegador bloqueie fullscreen
+        win.classList.toggle("fake-fullscreen");
+      }
+    }
+
+    document.addEventListener("fullscreenchange", () => {
+      const btn = document.getElementById("btnFullscreen");
+      btn.textContent = document.fullscreenElement ? "Sair da tela cheia" : "Tela cheia";
+    });
+  </script>
+</body>
+</html>
